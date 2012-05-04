@@ -1,0 +1,157 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
+		<style type="text/css">
+		.simplestyle{
+			border: 2px solid;
+			color: black;
+			margin:2px;
+		}
+		</style>
+		 <script type="text/javascript" src="Resources/display.js"></script> 
+		 <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.min.js"></script>
+          <script type="text/javascript">
+          var i,j,flaginitial,flaglast,tweetarray;
+          var category = 'No category'
+          flaginitial=0;
+          flaglast=10;
+          
+          var search = $("#searchtext").val();
+         function initial(){
+               	search = $("#searchtext").val();
+               	flaginitial=0;
+               	flaglast=10;
+               	function1(search);
+               }
+           
+          	function function1(search){
+          		 
+          		Ti.API.info('Now see !');
+          		//search ="cricket";
+          		// http://search.twitter.com/search.json?q=%40twitterapi
+           		
+          $.ajax({  
+      
+            url : "http://search.twitter.com/search.json?q="+search+"&callback=?&rpp=1500",  
+            //dataType : "json",  
+            timeout:30000,  
+      
+            success : function(data)   	
+            {    
+             // alert("ok"); 	
+              // parse data here  
+              var tweets=JSON.stringify(data.results[0]);
+              tweetarray = data.results;
+              //alert(tweets);
+              showtweets(tweetarray);
+                   },  
+      
+            error : function()  
+            {  
+                alert("Failure!");  
+            },  
+      
+           });  
+
+
+        }
+ 
+          function showtweets(tweetarray){
+          	$("#tweetsdiv").empty();
+              $("#tweetsdiv").addClass("simplestyle");
+             // alert(tweetarray.length);
+              for(var i=flaginitial;i<flaglast;i++){
+              	var user_id="#"; 
+              	
+              	$("#tweetsdiv").append('<div id='+tweetarray[i].id+' class="simplestyle"><b>'+ tweetarray[i].from_user_name +'</b>@'+ tweetarray[i].from_user +'</div><br>');
+                user_id+=tweetarray[i].id;
+                $(user_id).append('<br>'+ tweetarray[i].text +'<br>');
+                $(user_id).append('<span id='+tweetarray[i].id+' class="simplestyle" >Add as favourites</span>');
+                var addasfavid = user_id + ' .simplestyle';
+                $(addasfavid).click(function(){
+                
+                	
+                	var a,b;
+                	Ti.API.info('Function called !');
+                	alert('added as favourite !');
+                	for(j=0;j<tweetarray.length;j++)
+                	{  // alert(i);
+                		if(tweetarray[j].id==this.id){
+                			//alert(tweetarray[j].text);
+                			a = tweetarray[j].from_user;
+                			b = tweetarray[j].text;
+                			
+                			save(a,b);
+                			//alert(tweetarray.length);
+                			} 
+                		}
+                	});
+            }
+            $("#tweetsdiv").append('<br><span class="simplestyle" id="firstbutton">first</span>');
+            $("#tweetsdiv").append('<span class="simplestyle" id="previousbutton">Previous</span>'); 
+            $("#tweetsdiv").append('<span class="simplestyle" id="nextbutton">Next</span>');  
+             $("#tweetsdiv").append('<span class="simplestyle" id="lastbutton">last</span>');
+            $("#tweetsdiv").append('<br><input type="text" class="simplestyle" id="searchterm2"></input><button class="simplestyle" id="searchbutton2" >search</button><br><br>');
+               //alert("see button");
+             
+               $("#searchbutton2").click(function (){
+               	flaginitial = 0;
+               	flaglast = 10;
+               	search = $("#searchterm2").val();
+               	function1(search);
+               });
+               
+          $("#nextbutton").click(function(){ 
+          	flaginitial+=10;
+          	flaglast +=10;
+          	if(flaglast>=tweetarray.length){
+          		flaglast=tweetarray.length;
+          		flaginitial=flaglast-10;
+          		$("#nextbutton").hide();
+          	}
+          	showtweets(tweetarray);
+          	
+          });
+          $("#previousbutton").click(function(){ 
+          	flaginitial-=10;
+          	flaglast-=10;
+          	if(flaginitial<=0){
+          		flaginitial=0;
+          		flaglast=10;
+          		$("#previousbutton").hide();
+          	}
+          	showtweets(tweetarray);
+          	
+          });
+          $("#firstbutton").click(function(){ 
+          	flaginitial=0;
+          	flaglast=10;
+          	 
+          	showtweets(tweetarray);
+          	
+          });
+          $("#lastbutton").click(function(){ 
+          	flaginitial=tweetarray.length-10;
+          	flaglast=tweetarray.length;
+          	 
+          	showtweets(tweetarray);
+          	
+          });
+          	   
+          }
+          function save(a,b){
+          	 
+          	 Ti.App.fireEvent('app:fromWebView', { user_ID: a,message:b,category:category });
+          }
+
+          </script>	
+	</head>
+	<body onload="Ti.API.info('body loaded!');"> 
+	<b>Enter Search term:</b>
+	<input type="text" id="searchtext" style='width:30%'>
+	<button id="readsearchterm"  class="simplestyle" onclick="initial()" >search</button><br>
+	 
+	<div id="tweetsdiv"></div>
+	<div id="hai"><br></br></div>
+	</body>
+</html>

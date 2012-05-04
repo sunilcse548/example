@@ -1,0 +1,101 @@
+<html>
+	<head>
+	   <style type="text/css">
+		.simplestyle{
+			border: 2px solid;
+			color: black;
+		}
+		</style>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.5.min.js"></script>
+        <script type="text/javascript">
+              var msg
+              Ti.App.addEventListener('pageReady',function(e)
+               {
+                //alert('the id is' + e.tweets);
+                var s;
+                var tweet = new Array();
+                msg = e.tweets;
+                var count=0;
+                var thismsg='';
+                 
+                var delimiter='|~*##*~|';
+                var msg1  = msg.split(delimiter);
+                //alert(msg1[3]);
+                for(var i=0;i<msg1.length-1;i++){
+                	$("#favourites").append('<span>'+msg1[i]+'</span><br><div id='+msg1[i]+'><span id='+msg1[i]+' class="simplestyle" onclick="categorise(this.id,msg)">Add to category</span></div><br>');
+                    tweet[i]=msg1[i];                
+                }
+              /*  for(var i=0;i<msg.length;i++)
+                {
+                    var k;                	
+                	if(msg[i]=="\n")
+                	{
+                		count++;
+                		thismsg='';
+                		k="span";
+                		k+=count.toString();
+                		
+                		$("#favourites").append('<br><span class="simplestyle" id='+k+' onclick="cate(this.id)">Add to category</span><br>');
+                		
+                	    
+                		 
+                	    $("#favourites").append(msg[i]);
+                	    
+                	    
+                	}
+                	else{
+                		 
+                		// alert(msg[i]);
+                		$("#favourites").append(msg[i]);
+                		thismsg+=msg[i];
+                		//alert(k);
+                		//s[count]=thismsg;
+                	}
+                	
+                }*/
+                //alert(divid);
+                 //alert(thismsg);
+                 
+                
+                });
+                
+                function categorise(idno,msg){
+                	 alert("Functionality yet to come up");
+                	var delimiter='|~*##*~|';
+                	var msg1  = msg.split(delimiter);
+                	var msgcat;
+                	for(var i=0;i<msg1.length;i++)
+                	{  
+                		var msg2= msg1[i].split(" ");
+                		for(var j=0;j<msg2.length;j++){
+                			if(idno==msg2[j])
+                			{ 
+                				 
+                				var id="#";
+                				id+=idno;
+                				//id+=' .simplestyle';
+                				//$(id).append('<input id="text" id="catname">');
+                				//$(id).append('<button>Ok</button>');
+                				//alert(msg2[j]);
+                				//alert (msg1[i]);
+                				//alert(idno);
+                				//alert(id);
+                				msgcat = msg1[i]; 
+                			}
+                		}
+                		
+                	}
+                	
+                	//alert(s[3]);
+                }
+                 
+                
+      </script>
+    </head>
+     <body>
+     	<div id="button" ></div>
+	  <div id="favourites" class="simplestyle"></div>
+	  
+	  <br><br>
+	</body>
+</html>
