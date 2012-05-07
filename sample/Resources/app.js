@@ -43,25 +43,22 @@ var searchterm = Ti.UI.createTextField({
 });
 
 Ti.App.addEventListener('app:fromWebView', function(e) {
-   // alert(e.message);
-   // alert(e.user_ID);
+    
     tweet = e.message;
     tweeterid = e.user_ID;
+    tweetid = e.tweetid; 
+    category = e.category;
     
-   // alert(tweet);
-    Titanium.API.info('File system !');
-        	var newfile = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory+'/tweeters.txt');
-        	var b = Titanium.Filesystem.resourcesDirectory;
-        	 
-                       //alert(newfile.resolve());
-                           var delimiter= '|~*##*~|';
-                         newfile.write(tweeterid+": "+tweet+delimiter,true);
-                         Ti.API.info('newfile: '+newfile.read());
-           var catfile = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory+'/category+.txt');
-                 catfile.write(e.category+'\n',true);
-                 Ti.API.info('category file: '+catfile.read());
+Titanium.API.info('File system !');
+        	var tweetsfile = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory+'/tweeters.txt');
+            var delimiter= '|~*##*~|';
+            var msgdelimiter= '|~*#%&%#*~|';
+                tweetsfile.write(tweetid + " " + msgdelimiter+tweeterid+": "+msgdelimiter+tweet+" "+msgdelimiter+category +delimiter,true);
+                Ti.API.info('tweetsfile: '+tweetsfile.read());
+                          
                         
 });
+
 var webview = Titanium.UI.createWebView({
    width: 320,
    height: 367,
@@ -70,36 +67,7 @@ var webview = Titanium.UI.createWebView({
    url: 'simple.html'
 });
 win1.add(webview);
-/*
-win1.add(label1);
-win1.add(searchbutton);
-win1.add(searchterm);
- */
- /*
-
-  searchbutton.addEventListener('click',function(e) { 
-	var searchvalue = searchterm.value;
-	Titanium.API.info(searchvalue);
-    var xhr = Ti.Network.createHTTPClient();
-     
-
-    xhr.open("POST","http://search.twitter.com/search.json?q="+searchvalue+"&callback=?");
-    xhr.setRequestHeader('Content-type','application/json');
-    xhr.setRequestHeader('Accept','application/json');
-    xhr.onload = function(data) {
-     
-     xhr.setRequestHeader("X_REQUESTED_WITH", "JSON");
-
-     Titanium.API.info("Ok");
-        }
-        
-   });
-
-*/
-//win1.add(label1);
-
-//
-// create controls tab and root window
+ 
 //
 var win2 = Titanium.UI.createWindow({  
     title:'favorites',
@@ -119,7 +87,7 @@ var label2 = Titanium.UI.createLabel({
 	width:'auto'
 });
 
-//win2.add(label2);
+ 
 
 var view1 = Titanium.UI.createView({
 	 borderRadius:10,
@@ -127,33 +95,35 @@ var view1 = Titanium.UI.createView({
 	 width:380, 
 	 height:180 
 });
-
-//win2.add(view1);
+Ti.App.addEventListener('app:fromWebViewforchangecategory', function(e) {
+	var content = e.content;
+	var tweetsfile = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory+'/tweeters.txt');
+	
+	tweetsfile.write(content);
+	alert("saved to file");
+	 
+});
  
- 
-
-	//win2.add(favbutton);
 	
 	
 	
 	
 	 
-	 tabGroup.addEventListener('focus', function(e) {
-		if (e.previousIndex == 0) {
+tabGroup.addEventListener('focus', function(e) {
+	if (e.previousIndex == 0) {
 		 
-		var file = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory+'/tweeters.txt');
-    var t = file.read().text;
-  
-    var webview2 = Titanium.UI.createWebView({url:'displayPage.html'});
-    webview2.addEventListener('load', function() {
-    Ti.App.fireEvent('pageReady',{tweets:t});
+		var tweetsfile = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory+'/tweeters.txt');
+        var text = tweetsfile.read().text;
+        var webview2 = Titanium.UI.createWebView({url:'displayPage.html'});
+        webview2.addEventListener('load', function() {
+        Ti.App.fireEvent('pageReady',{tweets:text});
 	});
 	win2.add(webview2);
 		
 		
 		}
 	});
-	//win2.add(favbutton); 
+	 
 	
 	 
 
